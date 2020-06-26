@@ -57,7 +57,7 @@ public class OrderResource {
 		if(StringUtils.isBlank(order.getCustomerName()) || 
 				StringUtils.isBlank(order.getShippingAddress()) || 
 				null == order.getTotalAmount() || 
-				!(order.getTotalAmount() > 0)) {
+				!(order.getTotalAmount() < 0)) {
 			throw new InvalidPayloadException("Invalid Input Request.");
 		}
 	}
