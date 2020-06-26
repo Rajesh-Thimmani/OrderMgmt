@@ -3,6 +3,7 @@ package com.order.item.service.model;
 
 import java.io.Serializable;
 import java.sql.Date;
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -18,10 +19,11 @@ import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import lombok.Data;
+
+@Data
 @Entity
-
 @Table(name = "orders")
-
 @JsonIgnoreProperties("{orderItem}")
 public class Order implements Serializable {
 
@@ -46,7 +48,7 @@ public class Order implements Serializable {
 
 	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@JoinColumn(name = "order_id")
-	private Set<OrderItem> orderItem;
+	private Set<OrderItem> orderItems = new HashSet<>();
 
 	@Column(name = "total_amount")
 	private Long totalAmount;
@@ -54,53 +56,5 @@ public class Order implements Serializable {
 	public Order() {
 
 	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public String getCustomerName() {
-		return customerName;
-	}
-
-	public void setCustomerName(String customerName) {
-		this.customerName = customerName;
-	}
-
-	public Date getOrderDate() {
-		return orderDate;
-	}
-
-	public void setOrderDate(Date orderDate) {
-		this.orderDate = orderDate;
-	}
-
-	public String getShippingAddress() {
-		return shippingAddress;
-	}
-
-	public void setShippingAddress(String shippingAddress) {
-		this.shippingAddress = shippingAddress;
-	}
-
-	public Set<OrderItem> getOrderItem() {
-		return orderItem;
-	}
-
-	public void setOrderItem(Set<OrderItem> orderItem) {
-		this.orderItem = orderItem;
-	}
-
-	public Long getTotalAmount() {
-		return totalAmount;
-	}
-
-	public void setTotalAmount(Long totalAmount) {
-		this.totalAmount = totalAmount;
-	}
-
 }
+

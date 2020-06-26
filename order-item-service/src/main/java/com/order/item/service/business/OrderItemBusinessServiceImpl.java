@@ -40,7 +40,7 @@ public class OrderItemBusinessServiceImpl implements OrderItemBusinessService {
 	public Order createOrder(Order order) {
 		Order orderResponse = null;
 		try {
-			Set<OrderItem> orderItemSet = 	order.getOrderItem();
+			Set<OrderItem> orderItemSet = order.getOrderItems();
 			
 			if(!CollectionUtils.isEmpty(orderItemSet)) {
 				orderItemSet.forEach(item -> {

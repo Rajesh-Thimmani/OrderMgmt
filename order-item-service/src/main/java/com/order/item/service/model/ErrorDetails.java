@@ -85,7 +85,7 @@ public class ErrorDetails implements Serializable {
 		System.out.println("inside ErrorDetails ErrorCode Params constuctor");
 		this.httpStatus = codes.getStatus();
 		this.errorCode = codes.toString();
-		//this.errorMessage= codes.getDescription();
+		this.errorMessage= codes.getDescription();
 	}
 	
 	public ErrorDetails(final String errorCodes,final String errorMessage, final String errorDesc) {

@@ -54,8 +54,6 @@ public class OrderItemResource {
 			throw exception;
 		}
 	}
-
-	
 	
 	/**
 	 * get the order item details by id
@@ -71,7 +69,6 @@ public class OrderItemResource {
 		}catch(Exception exception) {
 			throw exception;
 		}
-
 	}
 
 }

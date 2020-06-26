@@ -15,14 +15,16 @@ import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import lombok.Data;
+
 /**
  * 
  * @author Rajesh
  *
  */
 
+@Data
 @Entity
-
 @Table(name = "Order_Item")
 
 public class OrderItem implements Serializable {
@@ -37,54 +39,22 @@ public class OrderItem implements Serializable {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 
-	@Column(name = "product_code")
+	@Column(name = "product_code", nullable = false)
 	private String productCode;
 
-	@Column(name = "product_name")
+	@Column(name = "product_name", nullable = false)
 	private String productName;
-
+	
+	@Column(name = "quantity", nullable = false)
 	private Integer quantity;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "order_id", nullable = false)
-
-	@JsonIgnore // @JsonIgnore 
+	@JsonIgnore  
 	private Order order;
 
 	public OrderItem() {
 
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public String getProductCode() {
-		return productCode;
-	}
-
-	public void setProductCode(String productCode) {
-		this.productCode = productCode;
-	}
-
-	public String getProductName() {
-		return productName;
-	}
-
-	public void setProductName(String productName) {
-		this.productName = productName;
-	}
-
-	public Integer getQuantity() {
-		return quantity;
-	}
-
-	public void setQuantity(Integer quantity) {
-		this.quantity = quantity;
 	}
 
 	public Order getOrder() {
@@ -94,10 +64,7 @@ public class OrderItem implements Serializable {
 	public void setOrder(Order order) {
 		this.order = order;
 	}
-
-	@Override
-	public String toString() {
-		return "[productCode :: " + this.productCode + "product name :: " + this.productName + "]";
-	}
+	
+	
 
 }
