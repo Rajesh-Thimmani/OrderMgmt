@@ -1,8 +1,10 @@
 package com.example.orderservice.resource;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -10,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.orderservice.exception.InvalidPayloadException;
 import com.example.orderservice.model.Order;
 import com.example.orderservice.proxy.OrderItemServiceProxy;
 
@@ -37,6 +40,7 @@ public class OrderResource {
 	@PostMapping(value="/create/order")
 	public Order createOrder(@RequestBody Order order) {
 		try {
+			validateInputRequest(order);
 			//service call
 			return orderItemServiceProxy.createOrder(order);
 		}catch(Exception exception) {
@@ -45,6 +49,20 @@ public class OrderResource {
 	}
 
 	
+	private void validateInputRequest(Order order) {
+		if(null == order || (null != order && CollectionUtils.isEmpty(order.getOrderItem()))) {
+			throw new InvalidPayloadException("Invalid Request Payload.");
+		}
+		
+		if(StringUtils.isBlank(order.getCustomerName()) || 
+				StringUtils.isBlank(order.getShippingAddress()) || 
+				null == order.getTotalAmount() || 
+				!(order.getTotalAmount() > 0)) {
+			throw new InvalidPayloadException("Invalid Input Request.");
+		}
+	}
+
+
 	/**
 	 * retrieve the order based on id
 	 * 
