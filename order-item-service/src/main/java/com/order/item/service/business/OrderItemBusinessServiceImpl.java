@@ -1,21 +1,20 @@
 package com.order.item.service.business;
 
-import java.util.Optional;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
-import com.order.item.service.enums.ErrorCodes;
+import com.order.item.service.dto.OrderItemDTO;
+import com.order.item.service.exceptionhandler.ErrorInRetrievingDataException;
 import com.order.item.service.exceptionhandler.OrderItemNotFound;
-import com.order.item.service.exceptionhandler.OrderNotFoundException;
-import com.order.item.service.model.ErrorDetails;
-import com.order.item.service.model.Order;
+import com.order.item.service.exceptionhandler.UnableToCreateOrderItem;
 import com.order.item.service.model.OrderItem;
 import com.order.item.service.repository.OrderItemRepository;
-import com.order.item.service.repository.OrderRepository;
 
 /**
  * 
@@ -25,65 +24,99 @@ import com.order.item.service.repository.OrderRepository;
 
 @Service("orderItemBusinessService")
 public class OrderItemBusinessServiceImpl implements OrderItemBusinessService {
-	
+
 	@Autowired
 	private OrderItemRepository orderItemRepository;
-	
-	@Autowired
-	private OrderRepository orderRepository;	
 
 	/**
 	 * create the order
 	 */
 	@Override
 	@Transactional
-	public Order createOrder(Order order) {
-		Order orderResponse = null;
+	public OrderItemDTO createOrderItem(OrderItemDTO orderItemDTO) {
+		OrderItem oderItem = new OrderItem();
+		OrderItemDTO orderItemDTORes = new OrderItemDTO();
 		try {
-			Set<OrderItem> orderItemSet = order.getOrderItems();
-			
-			if(!CollectionUtils.isEmpty(orderItemSet)) {
-				orderItemSet.forEach(item -> {
-					item.setOrder(order);
-				});
+			if (null != orderItemDTO) {
+				BeanUtils.copyProperties(orderItemDTO, oderItem);
+				oderItem = orderItemRepository.save(oderItem);
+				BeanUtils.copyProperties(oderItem, orderItemDTORes);
 			}
-			orderResponse = orderRepository.save(order);
-		}catch(Exception exception) {
-			throw exception;
+		} catch (Exception exception) {
+			throw new UnableToCreateOrderItem(exception.getMessage());
 		}
-		return orderResponse;
+		return orderItemDTORes;
 	}
 
-
 	/**
-	 * get the order details by id
+	 * will retrieve the order item by id
 	 */
 	@Override
-	@Transactional
-	public Order getOrderById(Long id) {
-		Optional<Order> isOrder = orderRepository.findById(id);
-		if (isOrder.isPresent()) {
-			return isOrder.get();
-		} else {
-			throw new OrderNotFoundException(new ErrorDetails(ErrorCodes.R001));
+	public OrderItemDTO getOrderItemById(Long id) {
+		OrderItemDTO itemDTO = new OrderItemDTO();
+		try {
+			OrderItem orderItem = orderItemRepository.findByOrderItemId(id);
+			if (null != orderItem) {
+				BeanUtils.copyProperties(orderItem, itemDTO);
+			} else {
+				throw new OrderItemNotFound("No order items are available");
+			}
+		} catch (Exception exception) {
+			throw new ErrorInRetrievingDataException(exception.getMessage());
 		}
+		return itemDTO;
 	}
 
 	/**
-	 *  Get the oder items by id
-	 *  
-	 * @param id
+	 * get All order items
+	 */
+	@Override
+	public List<OrderItemDTO> getOrderAllOrderItems() {
+		List<OrderItemDTO> orderItemDTOList = null;
+		List<OrderItem> orderItem = null;
+		try {
+			orderItem = orderItemRepository.findAll();
+			if (!CollectionUtils.isEmpty(orderItem)) {
+				orderItemDTOList = convertBOListTODTOList(orderItem);
+			} else {
+				throw new OrderItemNotFound("No order items are available");
+			}
+		} catch (Exception exception) {
+			throw new ErrorInRetrievingDataException(exception.getMessage());
+		}
+
+		return orderItemDTOList;
+	}
+
+	/**
+	 * get the order item details by order id
+	 */
+	@Override
+	public List<OrderItemDTO> getOrderItemByOrderId(Long id) {
+		List<OrderItemDTO> itemDTOList = null;
+		List<OrderItem> orderItems = orderItemRepository.findByOrderId(id);
+
+		if (!CollectionUtils.isEmpty(orderItems)) {
+			itemDTOList = convertBOListTODTOList(orderItems);
+		} else {
+			throw new OrderItemNotFound("No order items are available with this order id");
+		}
+		return itemDTOList;
+	}
+
+	/**
+	 * Method to convert the pojo to dto.
+	 * 
+	 * @param orderItems
 	 * @return
 	 */
-	@Transactional
-	public OrderItem getOrderItemById(Long id) {
-		OrderItem orderItem = null;
-		Optional<OrderItem> isOrderItem = orderItemRepository.findById(id);
-		if(isOrderItem.isPresent()) {
-			orderItem = isOrderItem.get();
-		}else {
-			throw new OrderItemNotFound(new ErrorDetails(ErrorCodes.ORI001));
-		}
-		return orderItem;
+	private List<OrderItemDTO> convertBOListTODTOList(List<OrderItem> orderItems) {
+		List<OrderItemDTO> itemDTOList = new ArrayList<>();
+		orderItems.forEach(item -> {
+			OrderItemDTO itemDTO = new OrderItemDTO();
+			BeanUtils.copyProperties(item, itemDTO);
+			itemDTOList.add(itemDTO);
+		});
+		return itemDTOList;
 	}
 }

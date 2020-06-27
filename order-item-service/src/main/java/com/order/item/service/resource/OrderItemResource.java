@@ -1,6 +1,9 @@
 package com.order.item.service.resource;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -9,8 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.order.item.service.business.OrderItemBusinessService;
-import com.order.item.service.model.Order;
-import com.order.item.service.model.OrderItem;
+import com.order.item.service.dto.OrderItemDTO;
 
 /**
  * 
@@ -23,52 +25,58 @@ public class OrderItemResource {
 
 	@Autowired
 	private OrderItemBusinessService orderItemBusinessService;
-
 	
+	
+
 	/**
 	 * create the order details
+	 * 
 	 * @param order
 	 * @return
 	 */
-	@PostMapping(value = "/create/order")
-	public Order createOrder(@RequestBody Order order) {
-		try {
-			//service call
-			return orderItemBusinessService.createOrder(order);
-		} catch (Exception exception) {
-			throw exception;
-		}
+	
+	@PostMapping(value = "/create/order/item")
+	public ResponseEntity<OrderItemDTO> createOrderItem(@RequestBody OrderItemDTO orderItemDTO) {
+		// service call
+		return ResponseEntity.ok().body(orderItemBusinessService.createOrderItem(orderItemDTO));
 	}
 
 	/**
 	 * get the order details by id
+	 * 
 	 * @param id
 	 * @return
 	 */
-	@GetMapping(value = "/order/{id}")
-	public Order getOrderById(@PathVariable("id") Long id) {
-		try {
-			//service call
-			return orderItemBusinessService.getOrderById(id);
-		}catch(Exception exception) {
-			throw exception;
-		}
+	
+	@GetMapping(value = "/orderItem/{id}")
+	public ResponseEntity<OrderItemDTO> getOrderById(@PathVariable("id") Long id) {
+		// service call
+		return ResponseEntity.ok().body(orderItemBusinessService.getOrderItemById(id));
+	}
+
+	/**
+	 * get All order items.
+	 * 
+	 * @param id
+	 * @return
+	 */
+	
+	@GetMapping(value = "/all/orderItems")
+	public ResponseEntity<List<OrderItemDTO>> getAllOrderItems() {
+		// service call
+		return ResponseEntity.ok().body(orderItemBusinessService.getOrderAllOrderItems());
 	}
 	
 	/**
-	 * get the order item details by id
-	 * @param id
+	 * get the order item details by order id
+	 * 
+	 * @param orderId
 	 * @return
 	 */
-	@GetMapping(value = "/{id}")
-	public OrderItem getOrderItemById(@PathVariable("id") Long id) {
-		try {
-			//service call
-			return orderItemBusinessService.getOrderItemById(id);
-			
-		}catch(Exception exception) {
-			throw exception;
-		}
+	
+	@GetMapping(value="/orderId/{id}")
+	public ResponseEntity<List<OrderItemDTO>> getOrderItemByOrderId(Long id){
+		return ResponseEntity.ok().body(orderItemBusinessService.getOrderItemByOrderId(id));
 	}
 
 }

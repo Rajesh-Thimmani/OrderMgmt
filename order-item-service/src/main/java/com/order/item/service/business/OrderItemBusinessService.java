@@ -1,7 +1,8 @@
 package com.order.item.service.business;
 
-import com.order.item.service.model.Order;
-import com.order.item.service.model.OrderItem;
+import java.util.List;
+
+import com.order.item.service.dto.OrderItemDTO;
 
 /**
  * 
@@ -9,12 +10,13 @@ import com.order.item.service.model.OrderItem;
  *
  */
 public interface OrderItemBusinessService {
-
 	
-	  public Order createOrder(Order order);
+	  public OrderItemDTO createOrderItem(OrderItemDTO orderItemDTO);
 	  
-	  public Order getOrderById(Long id);
+	  public OrderItemDTO getOrderItemById(Long id);
 	  
-	  public OrderItem getOrderItemById(Long id);
+	  public List<OrderItemDTO> getOrderAllOrderItems();	
+	  
+	  public List<OrderItemDTO> getOrderItemByOrderId(Long id);
 	 
 }

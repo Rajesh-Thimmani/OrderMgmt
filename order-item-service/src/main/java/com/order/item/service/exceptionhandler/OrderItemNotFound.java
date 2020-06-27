@@ -1,14 +1,12 @@
 package com.order.item.service.exceptionhandler;
 
-import com.order.item.service.model.ErrorDetails;
-
 /**
  * 
  * @author Rajesh
  *
  */
 
-public class OrderItemNotFound extends BaseException {
+public class OrderItemNotFound extends RuntimeException {
 
 	/**
 	 * 
@@ -22,18 +20,4 @@ public class OrderItemNotFound extends BaseException {
 	public OrderItemNotFound(String message) {
 		super(message);
 	}
-
-	public OrderItemNotFound(Throwable cause) {
-		super(cause);
-	}
-
-	public OrderItemNotFound(String message, Throwable cause) {
-		super(message, cause);
-	}
-
-	public OrderItemNotFound(ErrorDetails errorDetail) {
-		super(errorDetail);
-		
-	}
-
 }
