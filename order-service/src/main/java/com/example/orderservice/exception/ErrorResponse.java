@@ -1,6 +1,6 @@
 package com.example.orderservice.exception;
 
-public class ExceptionResponse {
+public class ErrorResponse {
 
 	private String errorMessage;
 	private String requestedURI;

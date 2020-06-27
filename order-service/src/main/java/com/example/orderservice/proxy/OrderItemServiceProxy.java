@@ -1,13 +1,16 @@
 package com.example.orderservice.proxy;
 
+import java.util.List;
+
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import com.example.orderservice.model.Order;
+import com.example.orderservice.dto.OrderItemDTO;
 
 /**
  * 
@@ -17,11 +20,13 @@ import com.example.orderservice.model.Order;
 
 @Configuration
 @FeignClient(name="order-item-service", url = "localhost:8088")
-//@RibbonClient(name="order-item-service")
 public interface OrderItemServiceProxy {
-	@PostMapping("/order-items/create/order")
-	public Order createOrder(@RequestBody Order order);
+
+	@GetMapping("/order-items/orderId/{id}")
+	public ResponseEntity<List<OrderItemDTO>> getOrderByOrderId(@PathVariable("id") long id);
 	
-	@GetMapping("/order-items/order/{id}")
-	public Order getOrderById(@PathVariable("id") Long id);
+	@PostMapping("/order-items/create/order/item")
+	public ResponseEntity<OrderItemDTO> createOrderItem(@RequestBody OrderItemDTO orderItemDTO);
+	
+	
 }
